@@ -1,0 +1,112 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        form.on('submit(sub)', function(data){
+
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/res/postAdd',
+                data: $.param(data.field),
+                loadFlag: true,
+                success : function(data){
+                    pop_close();
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+#end
+
+#define content()
+<div class="x-body">
+    <form class="layui-form" action="">
+        <input type="hidden" name="pid" value="#(pRes.id)">
+        <div class="layui-form-item">
+            <label class="layui-form-label">parent node</label>
+            <div class="layui-input-block">
+                <input type="text" name="pname" placeholder="parent node" class="layui-input" value="#(pRes.name)" readonly="readonly" disabled="disabled"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>resource name</label>
+            <div class="layui-input-block">
+                <input type="text" name="res.name" placeholder="resource name" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>URL</label>
+            <div class="layui-input-block">
+                <input type="text" name="res.url" placeholder="URL" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">icon</label>
+            <div class="layui-input-block">
+                <input type="text" name="res.iconCls" placeholder="icon" class="layui-input" value="" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>description</label>
+            <div class="layui-input-block">
+                <input type="text" name="res.des" placeholder="description" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>type</label>
+            <div class="layui-input-block">
+                <select id='type' name="res.type" lay-verify="required">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>number</label>
+            <div class="layui-input-block">
+                <input type="number" name="res.seq" placeholder="number" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>status</label>
+            <div class="layui-input-block">
+                <select id='status' name="res.status" lay-verify="required">
+                    <option value="1">normal</option>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                save
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

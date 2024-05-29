@@ -1,0 +1,84 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        form.on('submit(sub)', function(data){
+
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/user/postChangepwd',
+                data: $('#addForm').serialize(),
+                loadFlag: true,
+                success : function(data){
+                    history.go(0);
+                }
+            });
+            return false;
+        });
+
+        form.verify({
+            newPwd : function(value, item){
+                if(value.length < 6){
+                    return "The length of the password cannot be less than 6 characters";
+                }
+            },
+            rePwd : function(value, item){
+                if(!new RegExp($("#newPwd").val()).test(value)){
+                    return "The password entered twice is inconsistent, please re-enter it!";
+                }
+            }
+        });
+    });
+
+
+</script>
+
+#end
+
+#define content()
+<div class="x-body">
+    <form id="addForm" class="layui-form" action="">
+        <input type="hidden" name="user.id" value="#(user.id)">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>old password</label>
+            <div class="layui-input-block">
+                <input type="password" name="user.pwd" placeholder="" class="layui-input" value="" required  lay-verify="required|oldpwd" autocomplete="off"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">new password</label>
+            <div class="layui-input-block">
+                <input type="password" id = "newPwd" name="newPwd" placeholder="" class="layui-input" lay-verify="newPwd" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Confirm your new password</label>
+            <div class="layui-input-block">
+                <input type="password" name="rePwd" placeholder="" class="layui-input" lay-verify="rePwd" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                save
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

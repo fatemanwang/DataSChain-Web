@@ -1,0 +1,85 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define content()
+<div id="demo"></div>
+<form id="searchForm" class="layui-form x-center" >
+    <div class="layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">Uploader</label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" placeholder="Uploader" class="layui-input"/>
+            </div>
+            <div class="layui-input-inline" style="width : 80px">
+                <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/html" id="barDemo">
+    <a id="runoob" class="layui-btn layui-btn-xs" lay-event="edit">Select</a>
+</script>
+<div class="layui-row">
+    <table id="dataTable" lay-filter="dataTable"></table>
+</div>
+#end
+#define js()
+<script type="text/javascript">
+
+    layui.use(['table', 'layer','form'],function(){
+        var table = layui.table
+            , form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        table.render({
+            elem: "#dataTable",
+            url: '#(ctxPath)/system/privateEntity/tableData',
+            height: 500,
+            cols: [[
+                {field: 'id',sort:'true', title: 'ID',width:100}
+                , {field: 'content', title: 'Data content',width:600}
+                , {field: 'uploader', title: 'Uploader'}
+                , {field: 'uptime', title: 'timestamp'},
+                {field:"operation",toolbar:"#barDemo"}
+            ]],
+            method: 'get',
+            request: {
+                pageName: 'pageNumber'
+                ,limitName: 'pageSize'
+            },
+            page: true,
+            limits: [10, 15, 20, 25],
+            limit: 10
+        });
+        table.on('tool(dataTable)', function(obj) {
+            var data = obj.data;
+
+            pop_show('Download data','#(ctx)/system/privateEntity/showdown?id='+ data.id,'','500',function(){
+
+            })
+
+        })
+
+        reloadTable = function (name) {
+            table.reload('dataTable', {
+                url: '#(ctxPath)/system/privateEntity/tableData'
+                ,where: {name: name}
+            });
+        }
+
+        form.on('submit(search)', function(data){
+            reloadTable(data.field.name);
+            return false;
+        });
+
+    });
+
+</script>
+#end

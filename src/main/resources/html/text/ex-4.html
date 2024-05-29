@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../../static/js/ztree/jquery-1.4.4.min.js"></script>
+<script type="text/javascript">
+	
+	$(function(){
+		
+		var $items = $(":checkbox[name=items]");
+		var items = $("[name='items']");
+
+		$("#checkedAllBtn").click(function(){
+			items.attr("checked",true);
+			$("#checkedAllBox").attr("checked",true);
+		});
+
+		$("#checkedNoBtn").click(function(){
+			items.attr("checked",false);
+			$("#checkedAllBox").attr("checked",false);
+		});
+		
+
+		$("#checkedRevBtn").click(function(){
+			items.each(function(){
+				this.checked = !this.checked;
+			});
+			var flag = $("[name='items']:checked").length==4;
+			$("#checkedAllBox").attr("checked",flag);
+		});
+		
+
+		$("#sendBtn").click(function(){
+			$(":checkbox[name='items']:checked").each(function(){
+				alert(this.value);
+			});
+		});
+		
+
+		$("#checkedAllBox").click(function(){
+			items.attr("checked",this.checked);
+		});
+		
+
+		$("[name='items']").click(function(){
+			var flag = $("[name='items']:checked").length==4;
+			$("#checkedAllBox").attr("checked",flag);
+		});
+	});
+	
+</script>
+</head>
+<body>
+
+	<form method="post" action="">
+
+		What your favorite sport is:？<input type="checkbox" id="checkedAllBox" />Select all/select none
+		
+		<br />
+		<input type="checkbox" name="items" value="football" />football
+		<input type="checkbox" name="items" value="basketball" />basketball
+		<input type="checkbox" name="items" value="badminton" />badminton
+		<input type="checkbox" name="items" value="ping pong" />ping pong
+		<br />
+		<input type="button" id="checkedAllBtn" value="Select all" />
+		<input type="button" id="checkedNoBtn" value="Select none" />
+		<input type="button" id="checkedRevBtn" value="Counter-selection" />
+		<input type="button" id="sendBtn" value="submit" />
+	</form>
+
+</body>
+</html>

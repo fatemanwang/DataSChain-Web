@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>upload module</title>
+    <link rel="stylesheet" href="../../static/js/layui/css/layui.css">
+
+</head>
+<body>
+
+<div class="layui-upload">
+    <button type="button" class="layui-btn" id="test1"><i class="layui-icon">&#xe67c;</i>upload image</button>
+    <div class="layui-upload-list">
+        <img class="layui-upload-img" id="demo1">
+        <p id="demoText"></p>
+        <p id="yudu"></p>
+
+    </div>
+</div>
+<p id="download"></p>
+<script src="../../static/js/layui/layui.js"></script>
+
+<script>
+
+    layui.use('upload', function(){
+        var $ = layui.jquery
+            ,upload = layui.upload;
+
+
+        var uploadInst = upload.render({
+            elem: '#test1'
+            ,url: '/hello/handleUpload'
+            ,before: function(obj){
+
+                obj.preview(function(index, file, result){
+                    $('#demo1').attr('src', result);
+                    console.log(index);
+                    console.log(file);
+                    //console.log(result);
+                    // var file_url="";
+                    // file_url=obj.value;
+                    // alert(obj);
+                    $("#yudu").html("<span>name："+file.name+"</span>"+"<span>size："+file.size+"</span>");
+                });
+            }
+            ,done: function(res){
+
+                if(res.code > 0){
+                    return layer.msg('Upload failed');
+                }
+
+                layer.msg("The upload is successful");
+                console.log(res.msg);
+                $("#download").html("<a class='layui-btn layui-btn-small' href='/system/user/downfile?name="+res.msg+"'>download</a>");
+            }
+            ,error: function(){
+
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #ff5722;">Upload failed</span> <a class="layui-btn layui-btn-mini demo-reload">retry</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<link rel="stylesheet" href="#(RESOURCE_HOST)/static/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript" src="#(RESOURCE_HOST)/static/js/ztree/jquery.ztree.all.min.js"></script>
+<script type="text/javascript">
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: zTreeOnClick
+        }
+    };
+
+    var pid = 0;
+
+    var reloadTable;
+    function zTreeOnClick(event, treeId, treeNode) {
+        reloadTable(treeNode.id);
+    }
+
+    function zTreeReload() {
+        util.sendAjax ({
+            url : '#(ctxPath)/system/res/resTree',
+            notice: false,
+            success : function(data){
+                $.fn.zTree.init($("#tree"), setting, data.data);
+            }
+        })
+    }
+
+    $(document).ready(function(){
+        zTreeReload();
+    });
+
+    layui.use(['table', 'layer'], function () {
+        var table = layui.table
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+
+        var tableIns = table.render({
+            elem: '#dateTable'
+            , id: 'dateTable'
+            , even: true
+            , size: 'sm'
+            , height: 'full-100'
+            , cols: [[
+                {checkbox: false, sort: true, fixed: true, space: true}
+                , {field: 'id', title: 'ID', width: 60}
+                , {field: 'name', title: 'resource name', width: 120}
+                , {field: 'des', title: 'resource description', width: 120}
+                , {field: 'url', title: 'resource URL', width: 120}
+                , {field: 'iconCls', title: 'resource icon', width: 100, templet: '<div><i class="iconfont">{{d.iconCls }}</i></div>'}
+                , {field: 'seq', title: 'resource number', width: 100}
+            
+              
+                , {field: 'lastUpdAcct', title: 'last updater', width: 100}
+                , {field: 'lastUpdTime', title: 'last update time', width: 150}
+                , {field: 'note', title: 'note', width: 150}
+                , {fixed: 'right', title: 'operation', width: 160, align: 'center', toolbar: '#barOption'}
+            ]]
+            , url: '#(ctxPath)/system/res/resData'
+            , method: 'get'
+            , request: {
+                pageName: 'pageNumber'
+                ,limitName: 'pageSize'
+            }
+            , page: true
+            , limits: [30, 60, 90, 150, 300]
+            , limit: 30
+            , loading: true
+            , done: function (res, curr, count) {
+            }
+        });
+
+
+        table.on('checkbox(dateTable)', function (obj) {
+            console.log(obj.checked);
+            console.log(obj.data);
+            console.log(obj.type);
+        });
+
+        table.on('tool(dateTable)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('Really delete the line', function(index){
+                    util.sendAjax ({
+                        type: 'POST',
+                        url: '#(ctxPath)/system/res/delete',
+                        data: {id : data.id},
+                        loadFlag: true,
+                        success : function(data){
+                            layer.close(index);
+                            reloadTable(pid);
+                            zTreeReload();
+                        },
+                        unSuccess: function (data) {
+                            layer.close(index);
+                        }
+                    })
+                });
+            } else if(obj.event === 'edit'){
+                pop_show('edit resource','#(ctxPath)/system/res/update?id=' + data.id,'','', function(){
+                    reloadTable(pid);
+                    zTreeReload();
+                });
+            } else if(obj.event === 'use'){
+                util.sendAjax ({
+                    type: 'POST',
+                    url: '#(ctxPath)/system/res/use',
+                    data: {id : data.id},
+                    loadFlag: true,
+                    success : function(data){
+                        reloadTable(pid);
+                    }
+                });
+            } else if(obj.event === 'unuse'){
+                util.sendAjax ({
+                    type: 'POST',
+                    url: '#(ctxPath)/system/res/unuse',
+                    data: {id : data.id},
+                    loadFlag: true,
+                    success : function(data){
+                        reloadTable(pid);
+                    }
+                });
+            }
+        });
+
+        $("#addRes").click(function(){
+            // #(ctxPath)/system/res/add?pid=' + pid
+            pop_show('add resource','#(ctxPath)/system/res/add?pid=' + pid,'','', function(){
+                reloadTable(pid);
+                zTreeReload();
+            });
+        });
+
+        $("#module").click(function(){
+            reloadTable(0);
+        });
+
+        reloadTable = function (_pid) {
+            pid = _pid;
+            table.reload('dateTable', {
+                url: '#(ctxPath)/system/res/resData'
+                ,where: {pid: pid}
+            });
+        }
+
+        $(window).resize(function() {
+            $(document).find(".layui-fluid .layui-row div.layui-col-md3").height($(window).height()-50);
+        });
+    });
+
+
+
+</script>
+#end
+
+#define content()
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <div class="layui-col-md3" style="overflow:auto;">
+                <ul id="tree" class="ztree"></ul>
+            </div>
+            <div class="layui-col-md9">
+                <div class="layui-btn-group">
+                    #shiroHasPermission('/system/res/add')
+                    <button id="addRes" class="layui-btn layui-btn-small">add resource</button>
+                    #end
+                    <button id="module" class="layui-btn layui-btn-small">module management</button>
+                </div>
+                <table id="dateTable" lay-filter="dateTable"></table>
+            </div>
+        </div>
+    </div>
+
+<script type="text/html" id="barOption">
+    #shiroHasPermission('/system/res/update')
+    <a class="layui-btn layui-btn-xs" lay-event="edit">edit</a>
+    #end
+
+    #[[
+    {{#  if(d.status == '0'){ }}
+    ]]#
+    #shiroHasPermission('/system/res/use')
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="use">use</a>
+    #end
+    #[[
+    {{#  } }}
+    ]]#
+
+    #[[
+    {{#  if(d.status == '1'){ }}
+    ]]#
+    #shiroHasPermission('/system/res/unuse')
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="unuse">unuse</a>
+    #end
+    #[[
+    {{#  } }}
+    ]]#
+
+    #shiroHasPermission('/system/res/delete')
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">delete</a>
+    #end
+</script>
+#end

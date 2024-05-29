@@ -1,0 +1,78 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        form.on('submit(sub)', function(data){
+
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/role/postAdd',
+                data: $.param(data.field),
+                loadFlag: true,
+                success : function(data){
+                    pop_close();
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+#end
+
+#define content()
+<div class="x-body">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>name</label>
+            <div class="layui-input-block">
+                <input type="text" name="role.name" placeholder="name" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>description</label>
+            <div class="layui-input-block">
+                <input type="text" name="role.des" placeholder="description" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>level</label>
+            <div class="layui-input-block">
+                <input type="number" name="role.seq" placeholder="level" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>status</label>
+            <div class="layui-input-block">
+                <select id='status' name="role.status" lay-verify="required">
+                    <option value="1">normal</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                save
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

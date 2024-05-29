@@ -1,0 +1,142 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['table', 'layer'], function () {
+        var table = layui.table
+            , layer = layui.layer
+            , $ = layui.jquery
+            , form = layui.form;
+
+
+        var tableIns = table.render({
+            elem: '#dateTable'
+            , id: 'dateTable'
+            , even: true
+            , size: 'sm'
+            , height: 'full-150'
+            , cols: [[
+                {checkbox: false, sort: true, fixed: true, space: true}
+                , {field: 'id', title: 'ID', width: 60}
+                , {field: 'name', title: 'role name', width: 120}
+                , {field: 'des', title: 'role description', width: 150}
+                , {field: 'seq', title: 'number', width: 60}
+                
+                , {field: 'lastUpdAcct', title: 'last updater', width: 100}
+                , {field: 'lastUpdTime', title: 'last update time', width: 150}
+                , {field: 'note', title: 'note', width: 150}
+                , {fixed: 'right', title: 'operation', width: 200, align: 'center', toolbar: '#barOption'}
+            ]]
+            , url: '#(ctx)/system/role/tableData'
+            , method: 'get'
+            , request: {
+                pageName: 'pageNumber'
+                ,limitName: 'pageSize'
+            }
+            , page: true
+            , limits: [30, 60, 90, 150, 300]
+            , limit: 30 //默认采用30
+            , loading: true
+            , done: function (res, curr, count) {
+            }
+        });
+
+        table.on('tool(dateTable)', function(obj){
+            var data = obj.data;
+            // console.log(data)
+            if(obj.event === 'del'){
+                layer.confirm('Really delete the line', function(index){
+                    util.sendAjax ({
+                        type: 'POST',
+                        url: '#(ctx)/system/role/delete',
+                        data: {id : data.id},
+                        loadFlag: true,
+                        success : function(data){
+                            layer.close(index);
+                            reloadTable($('#name').val());
+                        },
+                        unSuccess: function (data) {
+                            layer.close(index);
+                        }
+                    })
+                });
+            } else if(obj.event === 'edit'){
+                pop_show('edit role','#(ctx)/system/role/update?id=' + data.id,'','', function(){
+                    reloadTable($('#name').val());
+                });
+            } else if(obj.event === 'auth'){
+                pop_show('Role empowerment','#(ctx)/system/role/auth?id=' + data.id,'','', function(){
+                    reloadTable($('#name').val());
+                });
+            }
+        });
+
+        $("#add").click(function(){
+            pop_show('add role','#(ctx)/system/role/add','','', function(){
+                reloadTable($('#name').val());
+            });
+        });
+
+        reloadTable = function (name) {
+            table.reload('dateTable', {
+                url: '#(ctx)/system/role/tableData'
+                ,where: {name: name}
+            });
+        }
+
+        form.on('submit(search)', function(data){
+            reloadTable(data.field.name);
+            return false;
+        });
+    });
+
+
+</script>
+#end
+
+#define content()
+    <div class="layui-fluid">
+        <form id="searchForm" class="layui-form x-center" action="" >
+            <div class="layui-form-pane">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">role name</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" name="name" placeholder="role name" class="layui-input"/>
+                    </div>
+
+                    <div class="layui-input-inline" style="width : 80px">
+                        <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <div class="layui-row">
+            <div class="layui-btn-group">
+                #shiroHasPermission('/system/role/add')
+                <button id="add" class="layui-btn layui-btn-small">add role</button>
+                #end
+            </div>
+            <table id="dateTable" lay-filter="dateTable"></table>
+        </div>
+    </div>
+
+<script type="text/html" id="barOption">
+    #shiroHasPermission('/system/role/update')
+    <a class="layui-btn layui-btn-xs" lay-event="edit">edit</a>
+    #end
+    #shiroHasPermission('/system/role/auth')
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="auth">permission</a>
+    #end
+    #shiroHasPermission('/system/role/delete')
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">delete</a>
+    #end
+</script>
+#end

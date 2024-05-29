@@ -1,0 +1,164 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        $(function GetAllProperties(){
+            $.ajax({
+                data: "aaaa",
+                url: "#(ctxPath)/system/user/uploadRole",
+                type: "post",
+                success: function (data) {
+                    a='<label class="layui-form-label">Group</label>';
+                    a+='<div class="layui-input-block">';
+                    $.each(data,function (i,e) {
+                        a+="<input type='checkbox' name='userRole' disabled value='" + data[i].name + "' title='" + data[i].name + "'>"
+                    })
+                    a+='</div>';
+                    console.log(a);
+                    $("#new").append(a);
+                    form.render('checkbox');
+                }
+
+            })})
+
+        form.on('submit(sub)', function(data){
+
+            var arr_box = [];
+            $("input:checkbox[name='userRole']:checked").each(function() {
+                arr_box.push($(this).val());
+            });
+            var res=arr_box.toString();
+
+            var user_cooperator = [];
+            $("input:checkbox[name='userCooperator']:checked").each(function() {
+                user_cooperator.push($(this).val());
+            });
+
+            var user_downloader = [];
+            $("input:checkbox[name='userDownloader']:checked").each(function() {
+                user_downloader.push($(this).val());
+            });
+
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/entity/postUpdateDownloader',
+                data: {key:$("#key").val(),name:$("#name").val(),des:$("#des").val(),url:$("#url").val(),role:res,userCooperator:user_cooperator,userDownloader:user_downloader,cid:$("#cid").val()},
+                loadFlag: true,
+                success : function(data){
+                    pop_close();
+                }
+            });
+
+            return false;
+        });
+
+
+    });
+</script>
+#end
+
+#define content()
+<div class="x-body">
+    <form class="layui-form" action="">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style ="width:15%;">ID</label>
+            <div class="layui-input-block">
+                <input id="key" style ="width:85%;" type="text" disabled="disabled" name="entity.id" placeholder="ID" class="layui-input" value="#(entity.id ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style ="width:15%;">Data name</label>
+            <div class="layui-input-block">
+                <input id="name" style ="width:85%;" type="text" name="name" disabled placeholder="Data name" class="layui-input" value="#(name ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style ="width:15%;">Data describe</label>
+            <div class="layui-input-block">
+                <input id="des" style ="width:85%;" type="text"  name="des" disabled placeholder="Data describe" class="layui-input" value="#(des ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style ="width:15%;">Data address</label>
+            <div class="layui-input-block">
+                <input id="url"  style ="width:85%;" type="text" name="url" disabled placeholder="Data address" class="layui-input" value="#(url ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style ="width:15%;">uptime</label>
+            <div class="layui-input-block">
+                <input style ="width:85%;" type="text" disabled="disabled" name="entity.uptime" placeholder="uptime" class="layui-input" value="#(entity.uptime ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item" hidden="hidden">
+            <label class="layui-form-label" style ="width:15%;">uploader</label>
+            <div class="layui-input-block">
+                <input id="ip" style ="width:85%;" type="text" disabled="disabled" name="entity.uploader" placeholder="uploader" class="layui-input" value="#(entity.uploader ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>data probe</label>
+            <div class="layui-input-block">
+                <input id="cid" type="text"  disabled name="cid" placeholder="data probe cid" class="layui-input" value="#(cid ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="new">
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">data Collaborators</label>
+            <div class="layui-input-block">
+                #for (user : userList)
+                <input type="checkbox" name="userCooperator" value="#(user.name)" disabled
+                       #for (coope : cooperator)
+                            #(coope == user.name ? 'checked':'')
+                       #end
+                       title="#(user.name)">
+                #end
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">data Downloader</label>
+            <div class="layui-input-block">
+                #for (user : userList)
+                <input type="checkbox" name="userDownloader" value="#(user.name)"
+                       #for (down : downloader)
+                            #(down == user.name ? 'checked':'')
+                       #end
+                       title="#(user.name)">
+                #end
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                submit
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

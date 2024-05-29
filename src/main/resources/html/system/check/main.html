@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../static/js/layui/css/layui.css">
+    <script src="../../static/js/layui/layui.js"></script>
+</head>
+<body>
+<div id="demo"></div>
+
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">
+            Get the data of the selected rows
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">
+            Get the selected number
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">
+            Verify that all are selected
+        </button>
+    </div>
+</script>
+
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">edit</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">delete</a>
+</script>
+
+<script type="text/javascript">
+    layui.use('table', function() {
+        var table = layui.table;
+
+        table.render({
+            elem: "#demo",
+            url: 'js/user.json',
+            cols:[[
+
+                {field:'aa',type:"numbers"},
+
+                {field:'aa',type:"checkbox"},
+                {field:'id',title:'User number',sort:true,width:120,hide:true},
+                {field:'username',title:'User name',width:100,edit:'text'},
+                {field:'sex',title:'gender',width:100,sort:true},
+                {field:'city',title:'city',width:100},
+                {field:'sign',title:'signature',edit:'text'},
+
+                {field:"operation",toolbar:"#barDemo"}
+            ]],
+
+            page:true,
+
+            toolbar:"#toolbarDemo"
+        })
+    })
+</script>
+</body>
+</html>

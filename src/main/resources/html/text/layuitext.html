@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../static/js/layui/css/layui.css">
+    <script src="../../static/js/layui/layui.js"></script>
+
+</head>
+<body class="layui-layout-body" style="overflow: hidden">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">layui Backstage layout</div>
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="">layui documentation</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item"><a href="">layui documentation</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item"><a href="">Sidebar navigation</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body" >
+
+        <iframe src="https://www.baidu.com/" frameborder="0" height="100%" width="100%"></iframe>
+    </div>
+
+    <div class="layui-footer">
+
+        © layui.com - Bottom fixation area
+    </div>
+</div>
+<!--<script src="../src/layui.js"></script>-->
+<script>
+
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</body>
+</html>

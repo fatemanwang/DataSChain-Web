@@ -1,0 +1,108 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        form.on('submit(sub)', function(data){
+            alert($('#addForm').serialize());
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/user/postAdd',
+                data: $('#addForm').serialize(),
+                loadFlag: true,
+                success : function(data){
+                    pop_close();
+                }
+            });
+
+            return false;
+        });
+    });
+
+    // for(var i in data2)
+    // {
+    //     a+='<input type="checkbox" name="userRole" value="aaa" title="aaa">'
+    // }
+    $.ajax({
+        data: "aaaa",
+        url: "#(ctxPath)/system/user/uploada",
+        type: "post",
+        success: function (data) {
+            a='<label class="layui-form-label">角色</label>';
+            a+='<div class="layui-input-block">';
+            for(i=0;i<data.length;i++)
+            {
+                a+="<input type='checkbox' name='userRole' value='" + data[i].id + "' title='" + data[i].name + "'>"}
+            a+='</div>';
+            console.log(a);
+            $("#new").append(a);
+        }
+
+    })
+</script>
+#end
+
+#define content()
+<div class="x-body">
+    <form id="addForm" class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>name</label>
+            <div class="layui-input-block">
+                <input type="text" name="user.name" placeholder="name" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>password</label>
+            <div class="layui-input-block">
+                <input type="text" name="user.pwd" placeholder="password" class="layui-input" value="" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">tel</label>
+            <div class="layui-input-block">
+                <input type="text" name="user.phone" placeholder="tel" class="layui-input" value="" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">e-mail</label>
+            <div class="layui-input-block">
+                <input type="text" name="user.email" placeholder="e-mail" class="layui-input" value="" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="new">
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>status</label>
+            <div class="layui-input-block">
+                <select id='status' name="user.status" lay-verify="required">
+                    <option value="1">normal</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                save
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

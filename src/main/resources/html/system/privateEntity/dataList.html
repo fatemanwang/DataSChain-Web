@@ -1,0 +1,147 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['table', 'layer'], function () {
+        var table = layui.table
+            , layer = layui.layer
+            , $ = layui.jquery
+            , form = layui.form;
+
+        // 表格渲染
+        var tableIns = table.render({
+            elem: '#dataTable'
+            , id: 'dataTable'
+            , even: true
+            , size: 'sm'
+            , height: 'full-150'
+            , cols: [[
+                {field: 'id',sort:'true', title: 'ID',width:100}
+                , {field: 'content', title: 'data content',width:600}
+                , {field: 'uploader', title: 'data uploader'}
+                , {field: 'uptime', title: 'uptime'}
+                , {fixed: 'right', title: 'operation', width: 200, align: 'center', toolbar: '#barOption'} //这里的toolbar值是模板元素的选择器
+            ]]
+            , url: '#(ctx)/system/privateEntity/tableData'
+            , method: 'get'
+            , request: {
+                pageName: 'pageNumber'
+                ,limitName: 'pageSize'
+            }
+            , page: true
+            , limits: [30, 60, 90, 150, 300]
+            , limit: 30
+            , loading: true
+            , done: function (res, curr, count) {
+            }
+        });
+
+        table.on('tool(dataTable)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('are You Sure You Want To Delete It', function(index){
+                    util.sendAjax ({
+                        type: 'POST',
+                        url: '#(ctx)/system/privateEntity/delete',
+                        data: {id : data.id},
+                        loadFlag: true,
+                        success : function(data){
+                            layer.close(index);
+                            reloadTable($('#name').val());
+                        },
+                        unSuccess: function (data) {
+                            layer.close(index);
+                        }
+                    })
+                });
+            } else if(obj.event === 'edit'){
+                pop_show('Update Data','#(ctx)/system/privateEntity/update?id=' + data.id,'','', function(){
+                    reloadTable($('#name').val());
+                });
+            }
+
+            else if(obj.event === 'editCooperator'){
+                pop_show('update Data Collaborator Permissions','#(ctx)/system/privateEntity/updateCooperator?id=' + data.id,'','', function(){
+                    reloadTable($('#name').val());
+                });
+            }
+            else if(obj.event === 'editDownloader'){
+                pop_show('update Data Downloader Permissions','#(ctx)/system/privateEntity/updateDownloader?id=' + data.id,'','', function(){
+                    reloadTable($('#name').val());
+                });
+            }
+        });
+
+
+        reloadTable = function (name) {
+            table.reload('dataTable', {
+                url: '#(ctx)/system/privateEntity/tableData'
+                ,where: {name: name}
+            });
+        }
+
+        form.on('submit(search)', function(data){
+            reloadTable(data.field.name);
+            return false;
+        });
+
+        form.on('submit(editUploader)', function(data){
+            pop_show('Edit Uploader Permissions','#(ctx)/system/privateEntity/updateUploader','','500',function(){
+
+            })
+        });
+    });
+
+
+</script>
+#end
+
+#define content()
+<div class="layui-fluid">
+    <form id="searchForm" class="layui-form x-center" action="" >
+        <div class="layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">Uploader IP</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="name" name="name" placeholder="Uploader IP" class="layui-input"/>
+                </div>
+
+                <div class="layui-input-inline" style="width : 80px">
+                    <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+                </div>
+
+                <div class="layui-input-inline" style="width : 80px">
+                    <button class="layui-btn"  lay-submit="" lay-filter="editUploader">Edit Uploader Permissions</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <div class="layui-row">
+        <table id="dataTable" lay-filter="dataTable"></table>
+    </div>
+</div>
+
+<script type="text/html" id="barOption">
+    #shiroHasPermission('/system/privateEntity/update')
+    <a class="layui-btn layui-btn-xs" lay-event="edit">Edit</a>
+    #end
+
+    #shiroHasPermission('/system/privateEntity/updateCooperator')
+    <a class="layui-btn layui-btn-xs" lay-event="editCooperator">Update Cooperator</a>
+    #end
+    #shiroHasPermission('/system/privateEntity/updateDownloader')
+    <a class="layui-btn layui-btn-xs" lay-event="editDownloader">Update Downloader</a>
+    #end
+    #shiroHasPermission('/system/privateEntity/delete')
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">Delete</a>
+    #end
+</script>
+#end

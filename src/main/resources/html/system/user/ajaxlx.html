@@ -1,0 +1,41 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    $("#runoob").click(function(){
+        var data="/system/user/downqukuai"
+        $("#runoob").attr("href",data);
+
+    });
+    var getting = {
+
+        url:'#(ctx)/system/user/qukuaidata',
+
+
+        success:function(res) {
+            console.log(res.msg);
+            if(res.code=200){
+                $("#info").append(res.msg+'</br>');
+            }else{
+                console.log(res);
+            }
+        }
+    };
+
+    window.setInterval(function(){$.ajax(getting)},3000);
+</script>
+#end
+
+#define content()
+<div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <a style ="width:20%;height: 25px "id="runoob" class="layui-btn layui-btn-xs" lay-event="edit">download</a>
+</div>
+#end

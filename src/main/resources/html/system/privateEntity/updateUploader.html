@@ -1,0 +1,72 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        form.on('submit(sub)', function(data){
+
+
+            var user_uploader = [];
+            $("input:checkbox[name='userUploader_permission']:checked").each(function() {
+                user_uploader.push($(this).val());
+            });
+
+
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/privateEntity/postUpdate',
+                data: {userUploader:user_uploader},
+                loadFlag: true,
+                success : function(data){
+                    pop_close();
+                }
+            });
+
+            return false;
+        });
+
+    });
+</script>
+#end
+
+#define content()
+<div class="x-body">
+    <form class="layui-form" action="">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">data Uploader</label>
+            <div class="layui-input-block">
+                #for (user : userList)
+                <input type="checkbox" name="userUploader_permission" value="#(user.name)"
+                       #for (uploader : uploader_permission)
+                            #(uploader == user.name ? 'checked':'')
+                       #end
+                       title="#(user.name)">
+                #end
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                submit
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

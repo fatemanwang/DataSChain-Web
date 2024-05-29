@@ -1,0 +1,94 @@
+#include("/template/common/layout/_page_layout.html")
+#@layout()
+
+#define css()
+<style>
+
+</style>
+#end
+
+#define js()
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        form.on('submit(sub)', function(data){
+
+            util.sendAjax ({
+                type: 'POST',
+                url: '#(ctxPath)/system/data/postUpdate',
+                data: $('#addForm').serialize(),
+                loadFlag: true,
+                success : function(data){
+                    pop_close();
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+#end
+
+#define content()
+<div class="x-body">
+    <form id="addForm" class="layui-form" action="">
+        <input type="hidden" name="data.id" value="#(data.id ??)">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>code</label>
+            <div class="layui-input-block">
+                <input type="text" name="data.code" placeholder="code" class="layui-input" value="#(data.code ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>code description</label>
+            <div class="layui-input-block">
+                <input type="text" name="data.codeDesc" placeholder="code description" class="layui-input" value="#(data.codeDesc ??)" required  lay-verify="required" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>type code</label>
+            <div class="layui-input-block">
+                <input type="text" name="data.type" placeholder="type code" class="layui-input" value="#(data.type ??)" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>type description</label>
+            <div class="layui-input-block">
+                <input type="text" name="data.typeDesc" placeholder="type description" class="layui-input" value="#(data.typeDesc ??)" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>order number</label>
+            <div class="layui-input-block">
+                <input type="number" name="data.orderNo" placeholder="order number" class="layui-input" value="#(data.orderNo ??)" autocomplete="off"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><em class="require-mark">*</em>status</label>
+            <div class="layui-input-block">
+                <select id='status' name="data.status" lay-verify="required">
+                    <option></option>
+                    #statusOption(io.jboot.admin.service.entity.status.system.DataStatus::me(), data.status)
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button  class="layui-btn" lay-filter="sub" lay-submit>
+                save
+            </button>
+            <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+        </div>
+    </form>
+</div>
+#end

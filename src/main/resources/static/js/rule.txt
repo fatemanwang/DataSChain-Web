@@ -1,0 +1,16 @@
+
+   {
+  "data": [
+    {
+      "text": "Merchandise Management",
+      "icon": "&#xe622;",
+      "mark": "1",
+      "href": "demo/btn.html"
+    },{
+      "text": "Membership Management",
+      "icon": "&#xe621;",
+      "mark": "2",
+      "href": "demo/btn.html"
+    } 
+   ]
+  }  

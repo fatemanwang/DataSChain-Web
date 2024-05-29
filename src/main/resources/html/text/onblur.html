@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+
+        function onblurFun() {
+
+            console.log("Static registration loses focus events");
+        }
+
+
+        window.onload = function () {
+
+           var passwordObj = document.getElementById("password");
+
+            passwordObj.onblur = function () {
+                console.log("Dynamically register for out-of-focus events");
+            }
+        }
+
+    </script>
+</head>
+<body>
+    user:<input type="text" onblur="onblurFun();"><br/>
+    password:<input id="password" type="text" ><br/>
+</body>
+</html>
